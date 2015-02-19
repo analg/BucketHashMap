@@ -36,6 +36,11 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 		}
 	}
 
+	/**
+	 * Add Object to Store.
+	 *
+	 * @param val to add
+	 */
 	@Override
 	public void add(E val) {
 		if (size() == $size) {
@@ -51,6 +56,13 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 		$store[pointer] = val;
 	}
 
+
+	/**
+	 * Determine whether Object is present in Store.
+	 *
+	 * @param val to search for
+	 * @return
+	 */
 	@Override
 	public boolean contains(E val) {
 		int pointer = hash(val);
@@ -70,6 +82,11 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 		return false;
 	}
 
+	/**
+	 * Get array of non-null values in Store.
+	 *
+	 * @return array of values
+	 */
 	@Override
 	public Object[] toArray() {
 		Object[] a = new Object[$size];
@@ -86,6 +103,11 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 		return compact;
 	}
 
+	/**
+	 * Determine whether Store is empty.
+	 *
+	 * @return empty
+	 */
 	@Override
 	public boolean isEmpty() {
 		for (int i = 0; i < $store.length; i++) {
@@ -96,6 +118,11 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 		return true;
 	}
 
+	/**
+	 * Determine number of non-null elements in Store.
+	 *
+	 * @return size
+	 */
 	@Override
 	public int size() {
 		int size = 0;
@@ -107,6 +134,13 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 		return size;
 	}
 
+	/**
+	 * Remove an Object from the Store.
+	 *
+	 * @param val to remove
+	 *
+	 * @return whether value was removed
+	 */
 	@Override
 	public boolean remove(E val) {
 		int hash = hash(val);
@@ -121,11 +155,20 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 		return false;
 	}
 
+
+	/**
+	 * Clear the Store.
+	 */
 	@Override
 	public void clear() {
 		$store = (E[])(new Object[$size]);
 	}
 
+	/**
+	 * Get iterator.
+	 *
+	 * @return iterator
+	 */
 	@Override
 	public Iterator<E> iterator() {
 		return new HashStoreIterator();
