@@ -10,18 +10,18 @@ public class HashStoreTests {
 
 	@Test
 	public void itInitializes() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 	}
 
 	@Test
 	public void itAdds() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 		store.add("Hello");
 	}
 
 	@Test
 	public void itAddsAndContains() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 		String s = "Hello";
 		store.add(s);
 		assertTrue(store.contains(s));
@@ -29,7 +29,7 @@ public class HashStoreTests {
 
 	@Test
 	public void itAddsAndContainsAmbiguous() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 		String s = "Hello";
 		String t = "Hello";
 		store.add(s);
@@ -38,7 +38,7 @@ public class HashStoreTests {
 
 	@Test
 	public void itAddsAndRemovesAndNoLongerContainsAmbiguous() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 		String s = "Hello";
 		String t = "Hello";
 		store.add(s);
@@ -48,7 +48,7 @@ public class HashStoreTests {
 
 	@Test
 	public void itAddsAndKeepsProperSize() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 		String s = "Hello";
 		String t = "Hello";
 		String u = "Goodbye";
@@ -60,7 +60,7 @@ public class HashStoreTests {
 
 	@Test
 	public void itAddsAndClears() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 		String s = "Hello";
 		store.add(s);
 		store.clear();
@@ -69,7 +69,7 @@ public class HashStoreTests {
 
 	@Test
 	public void itAddsCorrectly() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < 7; i++) {
 			list.add(String.valueOf(i * 13));
@@ -86,7 +86,7 @@ public class HashStoreTests {
 
 	@Test
 	public void itAddsPastInitialCapacity() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 		for (int i = 0; i < 25; i++) {
 			store.add(String.valueOf(i));
 		}
@@ -95,7 +95,7 @@ public class HashStoreTests {
 
 	@Test
 	public void itAddsPastInitialCapacityAndIsCorrect() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < 13; i++) {
 			list.add(String.valueOf(i * 7));
@@ -112,7 +112,7 @@ public class HashStoreTests {
 
 	@Test
 	public void itIteratesWhenEmpty() {
-		CollectionI<String> store = new MuHashStore<String>();
+		CollectionI<String> store = new MuBucketHashStore<String>();
 		for (String s: store) {
 			fail();
 		}

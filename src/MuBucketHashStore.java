@@ -1,24 +1,28 @@
 import java.util.Iterator;
+import java.util.LinkedList;
 
-public class MuHashStore<E> implements structures.CollectionI<E> {
+public class MuBucketHashStore<E> implements structures.CollectionI<E> {
 
-	protected E[] $store;
+	protected LinkedList<E>[] $store;
 
 	protected int $size;
 	protected int $seed;
 
-	public MuHashStore() {
+	public MuBucketHashStore() {
 		this(10);
 	}
 
-	public MuHashStore(int size) {
+	public MuBucketHashStore(int size) {
 		this(size, size);
 	}
 
-	protected MuHashStore(int size, int seed) {
+	protected MuBucketHashStore(int size, int seed) {
 		$size = size;
 		$seed = seed;
-		$store = (E[])(new Object[$size]);
+		$store = new LinkedList[size];
+		for (int i = 0; i < $store.length; i++) {
+			$store[i] = new LinkedList<E>();
+		}
 	}
 
 	protected int hash(E e) {
@@ -43,19 +47,8 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 	 */
 	@Override
 	public void add(E val) {
-		if (size() == $size) {
-			resize();
-		}
-		int pointer = hash(val);
-		while ($store[pointer] != null) {
-			pointer++;
-			if (pointer >= $size) {
-				pointer = 0;
-			}
-		}
-		$store[pointer] = val;
+		$store[hash(val)].add(val);
 	}
-
 
 	/**
 	 * Determine whether Object is present in Store.
@@ -65,21 +58,7 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 	 */
 	@Override
 	public boolean contains(E val) {
-		int pointer = hash(val);
-		int first = pointer;
-		while ($store[pointer] != null) {
-			if ($store[pointer].equals(val)) {
-				return true;
-			}
-			pointer++;
-			if (pointer >= $size) {
-				pointer = 0;
-			}
-			if (pointer == first) {
-				break;
-			}
-		}
-		return false;
+		return $store[hash(val)].contains(val);
 	}
 
 	/**
@@ -89,18 +68,18 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 	 */
 	@Override
 	public Object[] toArray() {
-		Object[] a = new Object[$size];
-		int pointer = 0;
-		for (int i = 0; i < $size; i++) {
-			if ($store[i] != null) {
-				a[pointer++] = $store[i];
-			}
+		Object[] array = new Object[0];
+		Object[] temp;
+		for (LinkedList l: $store) {
+			temp = l.toArray();
+			int leftlength = array.length;
+			int rightlength = temp.length;
+			Object[] buffer = new Object[rightlength + leftlength];
+			System.arraycopy(array, 0, buffer, 0, leftlength);
+			System.arraycopy(array, 0, buffer, leftlength, rightlength);
+			array = buffer;
 		}
-		Object[] compact = new Object[pointer];
-		for (int i = 0; i < pointer; i++) {
-			compact[i] = a[i];
-		}
-		return compact;
+		return array;
 	}
 
 	/**
@@ -110,8 +89,8 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 	 */
 	@Override
 	public boolean isEmpty() {
-		for (int i = 0; i < $store.length; i++) {
-			if ($store[i] != null) {
+		for (LinkedList l: $store) {
+			if (!l.isEmpty()) {
 				return false;
 			}
 		}
@@ -126,10 +105,8 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 	@Override
 	public int size() {
 		int size = 0;
-		for (int i = 0; i < $store.length; i++) {
-			if ($store[i] != null) {
-				size++;
-			}
+		for (LinkedList l: $store) {
+			size += l.size();
 		}
 		return size;
 	}
@@ -143,15 +120,7 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 	 */
 	@Override
 	public boolean remove(E val) {
-		int hash = hash(val);
-		int index;
-		for (int i = 0; i < $size; i++) {
-			index = (i + hash) % $size;
-			if ($store[index].equals(val)) {
-				$store[index] = null;
-				return true;
-			}
-		}
+		$store[hash(val)].remove(val);
 		return false;
 	}
 
@@ -161,7 +130,10 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 	 */
 	@Override
 	public void clear() {
-		$store = (E[])(new Object[$size]);
+		$store = new LinkedList[$size];
+		for (int i = 0; i < $store.length; i++) {
+			$store[i] = new LinkedList<E>();
+		}
 	}
 
 	/**
@@ -175,10 +147,10 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 	}
 
 	protected void resize() {
-		MuHashStore<E> buffer = new MuHashStore<E>($size + $seed, $seed);
+		MuBucketHashStore<E> buffer = new MuBucketHashStore<E>($size + $seed, $seed);
 		for (int i = 0; i < $size; i++) {
-			if ($store[i] != null) {
-				buffer.add($store[i]);
+			for (E e: $store[i]) {
+				buffer.add(e);
 			}
 		}
 		$size += $seed;
@@ -188,23 +160,30 @@ public class MuHashStore<E> implements structures.CollectionI<E> {
 	protected class HashStoreIterator implements Iterator<E> {
 
 		int index = 0;
+		Iterator<E> innerIterator = new Iterator<E>() {
+			@Override
+			public boolean hasNext() {
+				return false;
+			}
+
+			@Override
+			public E next() {
+				return null;
+			}
+		};
 
 		@Override
 		public boolean hasNext() {
-			for (int i = index; i < $size; i++) {
-				if ($store[i] != null) {
-					return true;
-				}
+			while (index < $size && !innerIterator.hasNext()) {
+				innerIterator = $store[index++].iterator();
 			}
-			return false;
+
+			return innerIterator.hasNext();
 		}
 
 		@Override
 		public E next() {
-			while ($store[index] == null) {
-				index++;
-			}
-			return $store[index++];
+			return innerIterator.next();
 		}
 	}
 }
