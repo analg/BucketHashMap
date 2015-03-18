@@ -2,6 +2,7 @@ import org.junit.Test;
 import structures.CollectionI;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -116,6 +117,58 @@ public class HashStoreTests {
 		for (String s: store) {
 			fail();
 		}
+	}
+
+	@Test
+	public void itDoesNotHaveNextWhenEmpty() {
+		CollectionI<String> store = new MuBucketHashStore<String>();
+		assertFalse(store.iterator().hasNext());
+	}
+
+	@Test
+	public void itIterates() {
+		CollectionI<String> store = new MuBucketHashStore<String>();
+		String[] values = {"A", "B", "C", "D", "E"};
+		for (int i = 0; i < values.length; i++) {
+			store.add(values[i]);
+		}
+		for (int i = 0; i < values.length; i++) {
+			assertTrue(store.contains(values[i]));
+		}
+	}
+
+	@Test
+	public void itRemoves() {
+		CollectionI<String> store = new MuBucketHashStore<String>();
+		String[] values = {"A", "B", "C", "D", "E"};
+		for (int i = 0; i < values.length; i++) {
+			store.add(values[i]);
+		}
+		Iterator<String> iterator = store.iterator();
+		if (iterator.hasNext()) {
+			iterator.next();
+			iterator.remove();
+		}
+		if (iterator.hasNext()) {
+			iterator.next();
+			iterator.remove();
+		}
+		assertArrayEquals(store.toArray(), new String[] {"C", "D", "E"});
+	}
+
+	@Test
+	public void itRemovesEntirely() {
+		CollectionI<String> store = new MuBucketHashStore<String>();
+		String[] values = {"A", "B", "C", "D", "E"};
+		for (int i = 0; i < values.length; i++) {
+			store.add(values[i]);
+		}
+		Iterator<String> iterator = store.iterator();
+		while (iterator.hasNext()) {
+			iterator.next();
+			iterator.remove();
+		}
+		assertArrayEquals(store.toArray(), new String[] {});
 	}
 
 }

@@ -76,7 +76,7 @@ public class MuBucketHashStore<E> implements structures.CollectionI<E> {
 			int rightlength = temp.length;
 			Object[] buffer = new Object[rightlength + leftlength];
 			System.arraycopy(array, 0, buffer, 0, leftlength);
-			System.arraycopy(array, 0, buffer, leftlength, rightlength);
+			System.arraycopy(temp, 0, buffer, leftlength, rightlength);
 			array = buffer;
 		}
 		return array;
@@ -184,6 +184,11 @@ public class MuBucketHashStore<E> implements structures.CollectionI<E> {
 		@Override
 		public E next() {
 			return innerIterator.next();
+		}
+
+		@Override
+		public void remove() {
+			innerIterator.remove();
 		}
 	}
 }
