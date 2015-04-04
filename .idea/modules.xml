@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/HashStore.iml" filepath="$PROJECT_DIR$/HashStore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BucketHashMap.iml" filepath="$PROJECT_DIR$/BucketHashMap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../ListMap/ListMap.iml" filepath="$PROJECT_DIR$/../ListMap/ListMap.iml" />
     </modules>
   </component>
 </project>
