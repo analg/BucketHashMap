@@ -1,2 +1,2 @@
-# HashStore
-AoA HashStore assignment.
+# BucketHashMap
+AoA BucketHashMap assignment.
